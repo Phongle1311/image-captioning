@@ -33,4 +33,4 @@ The experiments showed that using pretrained **GloVe** embeddings yielded the be
 
 ## Authors
 - Quang-Huy Nguyen
-- Hoai-Phong Le# image-captioning
+- Hoai-Phong Le
