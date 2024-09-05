@@ -1,0 +1,95 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[utf8]{vietnam}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\renewcommand\thesection{\Roman{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}/}
+\begin{document}
+\title{Exploring Enhancement Techniques for Image Captioning\\}
+\author{\IEEEauthorblockN{Nguyễn Quang Huy\textsuperscript{1}}
+\IEEEauthorblockA{\textit{Trường Đại học Khoa học Tự nhiên, ĐHQG TP.HCM} \\
+\textit{TP Hồ Chí Minh, Việt Nam}\\
+20120497@student.hcmus.edu.vn}
+\and
+\IEEEauthorblockN{Lê Hoài Phong\textsuperscript{2}}
+\IEEEauthorblockA{\textit{Trường Đại học Khoa học Tự nhiên, ĐHQG TP.HCM} \\
+\textit{TP Hồ Chí Minh, Việt Nam}\\
+20120545@student.hcmus.edu.vn}
+}
+
+\maketitle
+
+\begin{abstract}
+Image captioning (chú thích hình ảnh tự động) là một bài toán đầy thử thách và có nhiều ứng dụng trong nhiều lĩnh vực khác nhau.
+Gần đây, đã có nhiều tiến bộ đáng kể trong chủ đề này nhờ vào những tiến bộ đáng kể trong học sâu và ngày càng có nhiều giải pháp cải tiến mới cho bài toán này.
+Bài nghiên cứu này sẽ đề cập tới quá trình xây dựng một mô hình học sâu cơ bản có thể sinh chú thích tự động cho hình ảnh và đề ra các giải pháp để cải tiến mô hình.
+Chúng tôi cũng sẽ đánh giá các tập dữ liệu huấn luyện và các phương pháp độ đo đánh giá hiệu suất, cũng như một số vấn đề mở rộng và các thách thức chưa được giải quyết xoay quanh vấn đề này.
+\end{abstract} 
+
+\begin{IEEEkeywords}
+Image Captioning, Deep Learning
+\end{IEEEkeywords}
+
+\section{Dẫn nhập}
+Image captioning (chú thích ảnh / sinh mô tả cho ảnh) là một chủ đề thú vị và được được nghiên cứu rộng rãi trong lĩnh vực học máy.
+Từ một tấm ảnh đầu vào, mô hình sẽ sinh ra một câu mô tả văn bản về nội dung bên trong bức ảnh.
+Chủ đề này có nhiều ứng dụng trong thực tế, bao gồm: hỗ trợ cho người khiếm thị hiểu được nội dung của hình ảnh, cải thiện khả năng tìm kiếm và truy xuất hình ảnh, trợ lý cho các công việc liên quan đến xử lý hình ảnh, và ứng dụng trong nhiều lĩnh vực khác như truyền thông, quảng cáo, y tế... 
+
+Mặc dù không khó để con người có thể mô tả một hình ảnh, tuy nhiên đây là một nhiệm vụ đầy thử thách đối với học máy.
+Rất khó để chú thích một bức ảnh hơn là phân loại và nhận dạng các bức ảnh.
+Nó yêu cầu máy tính phải nhận ra các vật thể và đặc trưng trong hình ảnh, tìm ra các mối liên hệ giữa chúng và đưa ra mô tả bằng ngôn ngữ tự nhiên.
+Để giải quyết vấn đề này, mô hình học sâu với cấu trúc encoder - decoder (mã hóa - giải mã) được ra đời với hai thành phần: Deep convolution neuron network (CNNs) để biểu diễn hình ảnh và Recurrent newron network (RNNs) để mô hình hóa ngôn ngữ.
+Bài toán này kết hợp cả hai chủ đề Computer vision (thị giác máy tính) và NLP (xử lý ngôn ngữ tự nhiên).
+
+\section{Tổng quan nghiên cứu}
+\subsection{Giải pháp chung}
+Những nghiên cứu về Image captioning hầu hết đều sử dụng mô hình học sâu với cấu trúc encoder - decoder khi chúng đã giải quyết vấn đề bằng cách kết hợp hai kĩ thuật về thị giác máy tính và xử lý ngôn ngữ tự nhiên.
+Trong cấu trúc encoder - decoder, encoder sẽ trích xuất một vector chứa các feature bên trong ảnh đầu vào và decoder sẽ tạo ra một câu mô tả dựa trên vector chứa các feature tạo bởi encoder.
+Encoder thường được dựa trên mô hình CNN và decoder thì dựa trên RNN. Các bài nghiên cứu đều dựa trên việc đề xuất mô hình hoặc cải tiến mô hình bằng các kĩ thuật khác nhau. 
+
+\subsection{Một số kĩ thuật được đề xuất}
+\subsubsection{CNNs và LSTMs} 
+Mô hình LSTM (Long short-term memory) \cite{b2} là một phiên bản cải tiến của RNN và được dùng phổ biến hơn cho các toán liên quan đến thông tin dạng chuỗi khi nó giải quyết được vấn đề vanishing gradient trong việc xử lý. Ví dụ, Vinyals et al. đã đề xuất mô hình sử dụng CNN cho việc phân loại hình ảnh và LTSM cho việc tạo câu mô tả cho hình ảnh \cite{b1} và đã có kết quả có độ chính xác tương đối ổn.
+\subsubsection{R-CNNs và LTSM}
+Mô hỉnh R-CNNs (Region-based CNNs) được giới thiệu bởi Girshick et al. \cite{b3} dùng để giải quyết vấn đề nhận diện object với nhiều tính chất khác nhau (về mặt kích thước, hình dạng,...) khi mà mô hình CNN thông thường sử dụng grid với kích thước cố định. A.K.Yadav đã đề xuất mô hình sử dụng Fast R-CNNs tích hợp VGG-16 cho việc nhận diện vùng và trích xuất đặc trưng và sử dụng mô hình LTSM cho chú thích ảnh. Khuyết điểm của mô hình VGG là lượng tham số lớn và tính toán nặng.  
+\subsubsection{ResNet-50 và LTSM}
+Mô hình ResNet-50 là một mạng CNN có 50 lớp dùng để giải quyết hiện tượng Vanishing Gradient cũng như tránh tham số quá lớn giúp cho quá trình train diễn ra tốt và nhanh hơn.  Y. Chu \cite{b6} đã đề xuất mô hình sử dụng ResNet-50 là một encoder để tạo vector một chiều biểu diễn đặc trưng trong ảnh và sử dụng mô hình LTSM là một decoder để decode vector tạo ra bởi encoder thành một câu chú thích. Đồng thời họ còn sử dụng soft attention ở decoder để có thể tập trung vào một số thành phần trong ảnh để dự đoán được câu tiếp theo tốt hơn. 
+\subsubsection{Cơ chế Attention} 
+Gần đây, mạng neuron sử dụng cơ chế attention được nghiên cứu, áp dụng cho tác vụ image captioning và tạo ra những đột phá bất ngờ.
+Hình ảnh được chia thành các vùng lưới đều và thực hiện tính toán trên từng phần.
+Khi RNNs sinh ra những từ mới, cơ chế này sẽ chỉ tập trung vào một số thành phần nhất định có liên quan.
+Một ví dụ điển hình là mô hình được đề xuất trong \cite{b5} cho hiệu quả cao hơn mô hình không dùng cơ chế tập trung.
+
+\subsection{Các vấn đề mở rộng}
+Có một số nghiên cứu gần đây tiếp cận image captioning theo hướng có thể giải thích được (explainable AI). Do mô hình "hộp đen" của học sâu, các phương pháp cũ không cung cấp đủ manh mối để giải quyết yêu cầu này. Seung-Ho Han et al. \cite{b7} đã đề xuất một số hướng để tạo một mô hình sinh chú thích ảnh có thể giải thích được.
+
+Một hướng khác là tập trung vào vấn đề cá nhân hóa. Bộ sinh chú thích ảnh sẽ dựa thêm vào các thông tin được cung cấp trước đó về người sử dụng để tạo câu mô tả phù hợp với từng đối tượng người sử dụng khác nhau. Nghiên cứu \cite{b8} đề xuất mô hình Context Sequence Memory Networks để giải quyết vấn đề này.
+
+
+
+
+
+
+\begin{thebibliography}{00}
+\bibitem{b1} O. Vinyals, A. Toshev, S. Bengio, and D. Erhan, “Show and tell: a neural image caption generator,” in Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 3156–3164, Boston, MA, USA, 2015.
+\bibitem{b2} S. Hochreiter and J. Schmidhuber. Long short-term memory. Neural computation, 9(8):1735–1780, nov 1997. ISSN 0899-7667. doi:10.1162/neco.1997.9.8.1735. URL \href{https://doi.org/10.1162/neco.1997.9.8.1735}{https://doi.org/10.1162/neco.1997.9.8.1735}.
+\bibitem{b3} R. Girshick, J. Donahue, T. Darrell, and J. Malik. Rich feature hierarchies for accurate object detection and semantic segmentation. In \textit{2014 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, volume 1, pages 580–587, Los Alamitos, CA, USA, jun 2014. IEEE Computer Society. doi:10.1109/CVPR.2014.81. URL \href{https://doi.ieeecomputersociety.org/10.1109/CVPR.2014.81}{https://doi.ieeecomputersociety.org/10.1109/CVPR.2014.81}.
+\bibitem{b4} A.K.Yadav, Prakash.J  (2021), Image captioning using R-CNN LSTM deep learning model, \textit{International Journal of Innovative Science and Research Technology}, Volume 6, Issue 5.
+\bibitem{b5}Shiyang Yan, Yuan Xie, Fangyu Wu, Jeremy S. Smith, Member, IEEE, Wenjin Lu and Bailing Zhang. "Image Captioning via a Hierarchical Attention Mechanism and Policy Gradient Optimization", in journal of Latex class files, vol. 14, no. 8, August 2015.
+\bibitem{b6}Y. Chu, X. Yue, L. Yu, M. Sergei, Z. Wang (2020). Automatic Image Captioning Based on ResNet50 and LSTM with Soft Attention. ,\textit{Wireless Communications and Mobile Computing}, 2020, 8909458. doi:10.1155/2020/8909458
+\bibitem{b7} Seung-Ho Han, Min-Su Kwon, Ho-Jin Choi. "EXplainable AI (XAI) approach to image captioning", The 3rd Asian Conference on Artificial Intelligence Technology (ACAIT 2019).
+\bibitem{b8} Cesc Chunseong Park,Byeongchang Kim, Gunhee Kim. "Attend to You: Personalized Image Captioning with Context Sequence Memory Networks", in CVPR 2017.
+\end{thebibliography}
+
+
+\end{document}
